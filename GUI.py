@@ -17,9 +17,10 @@ image = NotImplemented
 photo_image = NotImplemented
 
 
+
 # function to open the image file
 def open_image():
-    global file_path
+    global file_path,image_return
     file_path = filedialog.askopenfilename(title="Open Image File",
                                            filetypes=[("Image Files", "*.jpg;*.jpeg;*.png;*.bmp")])
     if file_path:
@@ -29,7 +30,7 @@ def open_image():
 
         photo_image = ImageTk.PhotoImage(image)
         canvas.create_image(0, 20, anchor="nw", image=photo_image)
-
+        image_return=photo_image
 
 def flip_image():
     try:
@@ -158,11 +159,13 @@ def save_image():
         if askyesno(title='Save Image', message='Do you want to save this image?'):
             # save the image to a file
             new_image.save(new_file_path)
-
+            
+def return_image():
+    canvas.create_image(0, 20, anchor="nw", image=image_return)
 
 root = ttk.Window()
 root.title("Image Editor")
-root.geometry("720x670+300+100")
+root.geometry("800x700+300+100")
 root.resizable(width=True, height=True)
 icon = ttk.PhotoImage(file='icon.png')
 root.iconphoto(False, icon)
@@ -196,6 +199,7 @@ pen_icon = ttk.PhotoImage(file='edit.png').subsample(2, 2)
 color_icon = ttk.PhotoImage(file='color.png').subsample(2, 2)
 erase_icon = ttk.PhotoImage(file='erase.png').subsample(2, 2)
 save_icon = ttk.PhotoImage(file='save.png').subsample(2, 2)
+return_icon=ttk.PhotoImage(file='returnn.png').subsample(2,2)
 
 # button for adding/opening the image file
 image_button = ttk.Button(left_frame, image=image_icon, style="light", command=open_image)
@@ -224,6 +228,10 @@ color_button.pack(padx=0, pady=5)
 # button for erasing the lines drawn over the image file
 erase_button = ttk.Button(left_frame, image=erase_icon, style="light", command=erase_lines)
 erase_button.pack(padx=0, pady=5)
+
+# button for revent the image file
+save_button = ttk.Button(left_frame, image= return_icon, style="light", command=return_image)
+save_button.pack(padx=0, pady=5)
 
 # button for saving the image file
 save_button = ttk.Button(left_frame, image=save_icon, style="light", command=save_image)
