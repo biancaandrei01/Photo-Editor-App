@@ -3,7 +3,6 @@ from tkinter import filedialog
 from tkinter.messagebox import showerror, askyesno
 from tkinter import colorchooser
 from PIL import Image, ImageOps, ImageTk, ImageFilter, ImageGrab
-from skimage import io,color
 
 # defining global variables
 WIDTH = 400
@@ -16,13 +15,16 @@ is_flipped = False
 rotation_angle = 0
 image = NotImplemented
 photo_image = NotImplemented
+img = NotImplemented
+image_return = NotImplemented
 
-nr1=0
-nr2=0
+nr1 = 0
+nr2 = 0
+
 
 # function to open the image file
 def open_image():
-    global file_path,image_return,img
+    global file_path, image_return, img
     file_path = filedialog.askopenfilename(title="Open Image File",
                                            filetypes=[("Image Files", "*.jpg;*.jpeg;*.png;*.bmp")])
     if file_path:
@@ -32,9 +34,11 @@ def open_image():
 
         photo_image = ImageTk.PhotoImage(image)
         canvas.create_image(0, 20, anchor="nw", image=photo_image)
-        img=image
-        image_return=photo_image
+        img = image
+        image_return = photo_image
 
+
+# function to flip the image
 def flip_image():
     try:
         global image, photo_image, is_flipped
@@ -44,85 +48,85 @@ def flip_image():
         # convert the PIL image to a Tkinter PhotoImage and display it on the canvas
         photo_image = ImageTk.PhotoImage(image)
         canvas.delete("all")
-        
+
         canvas.create_image(0, 20, anchor="nw", image=photo_image)
     except:
         showerror(title='Eroare la oglindire', message='Selecteaza o imagine!')
+
 
 # function for rotating left the image
 def rotate_left_image():
     try:
         global image, photo_image, rotation_angle
         # rotate left the image
-        rotated_image = image.rotate(rotation_angle + 90,expand=True)
-        #rotated_image = image.rotate(90,expand=True)
-        rotated_image=ImageOps.exif_transpose(rotated_image)
-        
+        rotated_image = image.rotate(rotation_angle + 90, expand=True)
+        # rotated_image = image.rotate(90,expand=True)
+        rotated_image = ImageOps.exif_transpose(rotated_image)
+
         rotation_angle = 0
         # reset image if angle is a multiple of 360 degrees
         if rotation_angle % 360 == 0:
             rotation_angle = 0
         # convert the PIL image to a Tkinter PhotoImage and display it on the canvas
-        image=rotated_image
+        image = rotated_image
         photo_image = ImageTk.PhotoImage(rotated_image)
         canvas.delete("all")
         canvas.config(width=rotated_image.width, height=rotated_image.height + 20)
-        
+
         canvas.create_image(0, 20, anchor="nw", image=photo_image)
     except Exception as e:
-        showerror(title='Eroare la rotire', message='Error rotating image: {}'.format(str(e)))
+        showerror(title='Eroare rotire stanga', message='Eroare la rotirea imaginii la stanga: {}'.format(str(e)))
 
+
+# function for rotating right the image
 def rotate_right_image():
     try:
         global image, photo_image, rotation_angle
         # rotate right the image
         rotated_image = image.rotate(rotation_angle - 90, expand=True)
-        #rotated_image = image.rotate(-90,expand=True)
-        rotated_image=ImageOps.exif_transpose(rotated_image)
-        
+        # rotated_image = image.rotate(-90,expand=True)
+        rotated_image = ImageOps.exif_transpose(rotated_image)
+
         rotation_angle = 0
         # reset image if angle is a multiple of 360 degrees
         if rotation_angle % 360 == 0:
             rotation_angle = 0
         # convert the PIL image to a Tkinter PhotoImage and display it on the canvas
-        image=rotated_image
+        image = rotated_image
         photo_image = ImageTk.PhotoImage(rotated_image)
         canvas.config(width=rotated_image.width, height=rotated_image.height + 20)
         canvas.delete("all")
         canvas.create_image(0, 20, anchor="nw", image=photo_image)
     except Exception as e:
-        showerror(title='Eroare la rotire', message='Error rotating image: {}'.format(str(e)))
+        showerror(title='Eroare rotire dreapta', message='Eroare la rotirea imaginii la dreapta: {}'.format(str(e)))
 
 
 # function for applying filters to the opened image file
-def apply_filter(filter):
+def apply_filter(filter_name):
     global image, photo_image
     try:
         # apply the filter to the image
-        if filter == "Alb si negru":
-            
-            image = color.rgb2gray(image)
-            
-            
-        elif filter == "Blur":
+        if filter_name == "Alb-Negru":
+            image = ImageOps.grayscale(image)
+        elif filter_name == "Blur":
             image = image.filter(ImageFilter.BLUR)
-        elif filter == "Ascutit":
+        elif filter_name == "Ascutit":
             image = image.filter(ImageFilter.SHARPEN)
-        elif filter == "Fin":
+        elif filter_name == "Fin":
             image = image.filter(ImageFilter.SMOOTH)
-        elif filter == "In relief":
+        elif filter_name == "In relief":
             image = image.filter(ImageFilter.EMBOSS)
-        elif filter == "Detaliat":
+        elif filter_name == "Detaliat":
             image = image.filter(ImageFilter.DETAIL)
-        elif filter == "Imbunatatire margini":
+        elif filter_name == "Imbunatatire margini":
             image = image.filter(ImageFilter.EDGE_ENHANCE)
-        elif filter == "Contur":
+        elif filter_name == "Contur":
             image = image.filter(ImageFilter.CONTOUR)
         # convert the PIL image to a Tkinter PhotoImage and display it on the canvas
         photo_image = ImageTk.PhotoImage(image)
         canvas.create_image(0, 20, anchor="nw", image=photo_image)
     except:
-        showerror(title='Error', message='Please select an image first!')
+        showerror(title='Eroare incarcare imagine', message='Va rugam sa selectati o imagine mai intai!')
 
 
 # function for drawing lines on the opened image
@@ -154,12 +158,13 @@ def set_pen():
 # function for changing the pen color
 def change_color():
     global pen_color
-    pen_color = colorchooser.askcolor(title="Select Pen Color")[1]
+    pen_color = colorchooser.askcolor(title="Selecteaza culoarea creionului")[1]
 
 
 # function for erasing lines on the opened image
+# TODO: solve the erase to not return to the painted version after another change
 def erase_lines():
-    global file_path
+    global file_path, image
     if file_path:
         canvas.delete("oval")
 
@@ -174,21 +179,22 @@ def save_image():
     # open file dialog to select save location and file type
     new_file_path = filedialog.asksaveasfilename(defaultextension=".jpg")
     if new_file_path:
-        if askyesno(title='Save Image', message='Do you want to save this image?'):
+        if askyesno(title='Salvare imagine', message='Vrei sa salvezi aceasta poza?'):
             # save the image to a file
             new_image.save(new_file_path)
-            
+
+
 def return_image():
-    global rotation_angle,image
-    rotation_angle=0
-    image=img
+    global rotation_angle, image
+    rotation_angle = 0
+    image = img
     canvas.delete("all")
     canvas.config(width=img.width, height=img.height + 20)
     canvas.create_image(0, 20, anchor="nw", image=image_return)
-    
+
 
 root = ttk.Window()
-root.title("Image Editor")
+root.title("Editor de imagini")
 root.geometry("1000x700+300+100")
 root.resizable(width=True, height=True)
 icon = ttk.PhotoImage(file='icon.png')
@@ -207,7 +213,7 @@ filter_label = ttk.Label(left_frame, text="Selecteaza filtrul:")
 filter_label.pack(padx=0, pady=5)
 
 # a list of filters
-image_filters = ["Contur", "Alb si negru", "Blur", "Detaliat", "In relief", "Imbunatatire margini", "Ascutit", "Fin"]
+image_filters = ["Contur", "Alb-Negru", "Blur", "Detaliat", "In relief", "Imbunatatire margini", "Ascutit", "Fin"]
 
 # combobox for the filters
 filter_combobox = ttk.Combobox(left_frame, values=image_filters, width=15)
@@ -223,7 +229,7 @@ pen_icon = ttk.PhotoImage(file='edit.png').subsample(2, 2)
 color_icon = ttk.PhotoImage(file='color.png').subsample(2, 2)
 erase_icon = ttk.PhotoImage(file='erase.png').subsample(2, 2)
 save_icon = ttk.PhotoImage(file='save.png').subsample(2, 2)
-return_icon=ttk.PhotoImage(file='returnn.png').subsample(2,2)
+return_icon = ttk.PhotoImage(file='return.png').subsample(2, 2)
 
 # button for adding/opening the image file
 image_button = ttk.Button(left_frame, image=image_icon, style="light", command=open_image)
@@ -254,8 +260,8 @@ erase_button = ttk.Button(left_frame, image=erase_icon, style="light", command=e
 erase_button.pack(padx=0, pady=5)
 
 # button for revent the image file
-save_button = ttk.Button(left_frame, image= return_icon, style="light", command=return_image)
-save_button.pack(padx=0, pady=5)
+revert_button = ttk.Button(left_frame, image=return_icon, style="light", command=return_image)
+revert_button.pack(padx=0, pady=5)
 
 # button for saving the image file
 save_button = ttk.Button(left_frame, image=save_icon, style="light", command=save_image)
