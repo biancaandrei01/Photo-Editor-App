@@ -3,10 +3,11 @@ from tkinter import filedialog
 from tkinter.messagebox import showerror, askyesno
 from tkinter import colorchooser
 from PIL import Image, ImageOps, ImageTk, ImageFilter, ImageGrab
+from skimage import io,color
 
 # defining global variables
-WIDTH = 500
-HEIGHT = 650
+WIDTH = 400
+HEIGHT = 520
 file_path = ""
 pen_size = 3
 pen_color = "black"
@@ -16,11 +17,12 @@ rotation_angle = 0
 image = NotImplemented
 photo_image = NotImplemented
 
-
+nr1=0
+nr2=0
 
 # function to open the image file
 def open_image():
-    global file_path,image_return
+    global file_path,image_return,img
     file_path = filedialog.askopenfilename(title="Open Image File",
                                            filetypes=[("Image Files", "*.jpg;*.jpeg;*.png;*.bmp")])
     if file_path:
@@ -30,6 +32,7 @@ def open_image():
 
         photo_image = ImageTk.PhotoImage(image)
         canvas.create_image(0, 20, anchor="nw", image=photo_image)
+        img=image
         image_return=photo_image
 
 def flip_image():
@@ -37,46 +40,58 @@ def flip_image():
         global image, photo_image, is_flipped
         # flip the image left and right
         image = image.transpose(Image.FLIP_LEFT_RIGHT)
+        image = ImageOps.exif_transpose(image)
         # convert the PIL image to a Tkinter PhotoImage and display it on the canvas
         photo_image = ImageTk.PhotoImage(image)
+        canvas.delete("all")
+        
         canvas.create_image(0, 20, anchor="nw", image=photo_image)
     except:
-        showerror(title='Flip Image Error', message='Please select an image to flip!')
+        showerror(title='Eroare la oglindire', message='Selecteaza o imagine!')
 
 # function for rotating left the image
 def rotate_left_image():
     try:
         global image, photo_image, rotation_angle
         # rotate left the image
-        rotated_image = image.rotate(rotation_angle + 90)
-        rotation_angle += 90
+        rotated_image = image.rotate(rotation_angle + 90,expand=True)
+        #rotated_image = image.rotate(90,expand=True)
+        rotated_image=ImageOps.exif_transpose(rotated_image)
+        
+        rotation_angle = 0
         # reset image if angle is a multiple of 360 degrees
         if rotation_angle % 360 == 0:
             rotation_angle = 0
         # convert the PIL image to a Tkinter PhotoImage and display it on the canvas
+        image=rotated_image
         photo_image = ImageTk.PhotoImage(rotated_image)
+        canvas.delete("all")
+        canvas.config(width=rotated_image.width, height=rotated_image.height + 20)
+        
         canvas.create_image(0, 20, anchor="nw", image=photo_image)
-    # catches errors
-    except:
-        showerror(title='Rotate Image Error', message='Please select an image to rotate!')
+    except Exception as e:
+        showerror(title='Eroare la rotire', message='Error rotating image: {}'.format(str(e)))
 
-
-# function for rotating left the image
 def rotate_right_image():
     try:
         global image, photo_image, rotation_angle
         # rotate right the image
-        rotated_image = image.rotate(rotation_angle - 90)
-        rotation_angle -= 90
+        rotated_image = image.rotate(rotation_angle - 90, expand=True)
+        #rotated_image = image.rotate(-90,expand=True)
+        rotated_image=ImageOps.exif_transpose(rotated_image)
+        
+        rotation_angle = 0
         # reset image if angle is a multiple of 360 degrees
         if rotation_angle % 360 == 0:
             rotation_angle = 0
         # convert the PIL image to a Tkinter PhotoImage and display it on the canvas
+        image=rotated_image
         photo_image = ImageTk.PhotoImage(rotated_image)
+        canvas.config(width=rotated_image.width, height=rotated_image.height + 20)
+        canvas.delete("all")
         canvas.create_image(0, 20, anchor="nw", image=photo_image)
-    # catches errors
-    except:
-        showerror(title='Rotate Image Error', message='Please select an image to rotate!')
+    except Exception as e:
+        showerror(title='Eroare la rotire', message='Error rotating image: {}'.format(str(e)))
 
 
 # function for applying filters to the opened image file
@@ -84,21 +99,24 @@ def apply_filter(filter):
     global image, photo_image
     try:
         # apply the filter to the image
-        if filter == "Black and White":
-            image = ImageOps.grayscale(image)
+        if filter == "Alb si negru":
+            
+            image = color.rgb2gray(image)
+            
+            
         elif filter == "Blur":
             image = image.filter(ImageFilter.BLUR)
-        elif filter == "Sharpen":
+        elif filter == "Ascutit":
             image = image.filter(ImageFilter.SHARPEN)
-        elif filter == "Smooth":
+        elif filter == "Fin":
             image = image.filter(ImageFilter.SMOOTH)
-        elif filter == "Emboss":
+        elif filter == "In relief":
             image = image.filter(ImageFilter.EMBOSS)
-        elif filter == "Detail":
+        elif filter == "Detaliat":
             image = image.filter(ImageFilter.DETAIL)
-        elif filter == "Edge Enhance":
+        elif filter == "Imbunatatire margini":
             image = image.filter(ImageFilter.EDGE_ENHANCE)
-        elif filter == "Contour":
+        elif filter == "Contur":
             image = image.filter(ImageFilter.CONTOUR)
         # convert the PIL image to a Tkinter PhotoImage and display it on the canvas
         photo_image = ImageTk.PhotoImage(image)
@@ -161,11 +179,17 @@ def save_image():
             new_image.save(new_file_path)
             
 def return_image():
+    global rotation_angle,image
+    rotation_angle=0
+    image=img
+    canvas.delete("all")
+    canvas.config(width=img.width, height=img.height + 20)
     canvas.create_image(0, 20, anchor="nw", image=image_return)
+    
 
 root = ttk.Window()
 root.title("Image Editor")
-root.geometry("800x700+300+100")
+root.geometry("1000x700+300+100")
 root.resizable(width=True, height=True)
 icon = ttk.PhotoImage(file='icon.png')
 root.iconphoto(False, icon)
@@ -179,11 +203,11 @@ canvas = ttk.Canvas(root, width=WIDTH, height=HEIGHT)
 canvas.pack()
 
 # label
-filter_label = ttk.Label(left_frame, text="Select Filter:")
+filter_label = ttk.Label(left_frame, text="Selecteaza filtrul:")
 filter_label.pack(padx=0, pady=5)
 
 # a list of filters
-image_filters = ["Contour", "Black and White", "Blur", "Detail", "Emboss", "Edge Enhance", "Sharpen", "Smooth"]
+image_filters = ["Contur", "Alb si negru", "Blur", "Detaliat", "In relief", "Imbunatatire margini", "Ascutit", "Fin"]
 
 # combobox for the filters
 filter_combobox = ttk.Combobox(left_frame, values=image_filters, width=15)
