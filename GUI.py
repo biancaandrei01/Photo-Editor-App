@@ -101,7 +101,7 @@ def apply_filter(filter):
         # apply the filter to the image
         if filter == "Alb si negru":
             
-            image = color.rgb2gray(image)
+            image = ImageOps.grayscale(image)
             
             
         elif filter == "Blur":
@@ -127,11 +127,13 @@ def apply_filter(filter):
 
 # function for drawing lines on the opened image
 def draw(event):
-    global file_path, image
+    global file_path, image,drawn_lines
     if file_path:
         x1, y1 = (event.x - pen_size), (event.y - pen_size)
         x2, y2 = (event.x + pen_size), (event.y + pen_size)
         canvas.create_oval(x1, y1, x2, y2, fill=pen_color, outline="", width=pen_size, tags="oval")
+        
+        drawn_lines.append(((x1, y1, x2, y2), pen_color, pen_size))
         # add the drawing on image
         image = ImageGrab.grab(bbox=(
             canvas.winfo_rootx(), canvas.winfo_rooty() + 20, canvas.winfo_rootx() + canvas.winfo_width(),
@@ -159,10 +161,20 @@ def change_color():
 
 # function for erasing lines on the opened image
 def erase_lines():
-    global file_path
+    global file_path, image, drawn_lines
     if file_path:
+        # Delete the ovals on the canvas
         canvas.delete("oval")
 
+        # Redraw the remaining lines
+        for line, color, size in drawn_lines:
+            canvas.create_oval(line, fill=color, outline="", width=size, tags="oval")
+
+        # Update the underlying image
+        image = ImageGrab.grab(bbox=(
+            canvas.winfo_rootx(), canvas.winfo_rooty() + 20, canvas.winfo_rootx() + canvas.winfo_width(),
+            canvas.winfo_rooty() + canvas.winfo_height()))
+        
 
 # the function for saving an image
 def save_image():
@@ -189,7 +201,7 @@ def return_image():
 
 root = ttk.Window()
 root.title("Image Editor")
-root.geometry("1000x700+300+100")
+root.geometry("1200x700+300+100")
 root.resizable(width=True, height=True)
 icon = ttk.PhotoImage(file='icon.png')
 root.iconphoto(False, icon)
