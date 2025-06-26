@@ -1,37 +1,47 @@
-# Prezentarea Aplicației de Editare a Imaginilor
+# Photo Editor Application
 
-Ecranul principal al aplicației de editare a imaginilor conține o interfață grafică simplă și intuitivă, construită folosind biblioteca **Tkinter** în limbajul de programare **Python**. Acest ecran este împărțit în două secțiuni principale: un **panou de comenzi** localizat în partea stângă și o **zonă de vizualizare** a imaginilor în partea dreaptă.
+The main window of the Photo Editor application features a simple and intuitive graphical user interface (GUI) built with Python using the **Tkinter** and **ttkbootstrap** libraries. The interface is divided into two main sections: a **control panel** on the left and a **canvas** for image viewing and editing on the right.
 
-![Interfața principală a aplicației](https://github.com/user-attachments/assets/2c11a315-3c4d-4528-838e-f8eb646eeb53)
+<img src="https://github.com/user-attachments/assets/f187e4fb-5265-4b09-a201-a24d663cd446" alt="Application Main Interface" width="50%"/>
 
-## Panoul de Comenzi
+## Control Panel
 
-Panoul de comenzi conține butoane pentru funcționalitățile cheie ale aplicației. Aceste butoane includ:
+The control panel contains buttons for the application's key functionalities. These controls include:
 
-*   **Încărcarea Imaginilor:** Folosind butonul cu iconița "Adaugă imagine", utilizatorul poate selecta și încărca o imagine din sistemul de fișiere.
-*   **Oglindirea Imaginilor:** Butonul cu iconița "Oglindire" permite utilizatorului să inverseze imaginea pe orizontală.
-*   **Rotirea Imaginilor:** Butoanele "Rotire la stânga" și "Rotire la dreapta" permit rotirea imaginii cu 90 de grade în sensul acelor de ceasornic sau în sens opus.
-*   **Selectarea Culorii Penei:** Utilizatorul poate alege culoarea pentru instrumentul de desenare folosind butonul cu iconița "Culoare".
-*   **Instrumentul de Desenare:** Butoanele "Desenare" și "Ștergere" activează și dezactivează instrumentul de desenare, permițând adăugarea sau ștergerea de linii pe imagine.
-*   **Revenirea la poza inițială:** Acest buton anulează toate modificările, fără a fi nevoie să reîncărcați imaginea.
-*   **Salvare:** Butonul cu iconița "Salvare" oferă posibilitatea de a salva imaginea editată într-un fișier.
+*   **Load Image:** Using the "Open" button, the user can select and load an image from their local file system.
+*   **Flip Image:** The "Flip" button allows the user to mirror the image horizontally.
+*   **Rotate Image:** The "Rotate Left" and "Rotate Right" buttons rotate the image 90 degrees counter-clockwise or clockwise.
+*   **Pen Color Selection:** The user can choose a color for the drawing tool using the "Pen Color" button.
+*   **Drawing Tools:** The "Toggle Pen" and "Erase" buttons activate and deactivate the drawing tool, allowing users to add or remove freehand lines on the image.
+*   **Revert to Original:** This button cancels all edits and restores the image to its original state, without needing to reload it.
+*   **Save Image:** The "Save" button provides the option to save the edited image to a new file.
 
-## Filtre și Efecte
+## Filters and Effects
 
-Ecranul principal oferă și o gamă variată de filtre și efecte pe care utilizatorii le pot aplica imaginilor încărcate:
+The application also offers a range of filters and effects that users can apply to their images from a dropdown menu:
 
-*   **Alb și Negru:** Convertește imaginea color într-una alb-negru, păstrând doar intensitățile luminoase.
-*   **Blurring (Estompare):** Creează un efect de estompare, reducând detaliile și oferind un aspect general neted.
-*   **Afișare Detaliată (Detaliat):** Accentuează detaliile din imagine, evidențiind texturile și muchiile obiectelor.
-*   **Estompare Fină (Fin):** Aplică un efect de estompare subtil, reducând contrastul și evidențiind tonurile uniforme.
-*   **Emboss (În Relief):** Adaugă un efect de relief imaginii, conferind un aspect tridimensional.
-*   **Îmbunătățire a Marginilor:** Accentuează marginile din imagine, sporind claritatea acestora.
-*   **Contur:** Evidențiază contururile obiectelor, conferind un aspect grafic distinct.
+*   **Black and White:** Converts the color image to grayscale, preserving only the light intensities.
+*   **Blur:** Creates a blurring effect, reducing detail and giving the image a smoother appearance.
+*   **Detail:** Accentuates the details in the image, highlighting textures and object edges.
+*   **Smooth:** Applies a subtle blur effect that reduces contrast and softens the image.
+*   **Emboss:** Adds a relief effect to the image, giving it a three-dimensional look.
+*   **Edge Enhance:** Sharpens the edges within the image, increasing their clarity.
+*   **Contour:** Highlights the contours of objects, giving the image a distinct graphic style.
+*   **Sharpen:** Increases the contrast between pixels, making the image appear crisper.
 
-![Demonstrație filtre pe imagine](https://github.com/user-attachments/assets/ae2ca10d-191b-4a7d-97f7-2362650b160c)
+## Image Canvas
 
-## Zona de Vizualizare
+The image canvas is the main area on the right side of the window. This is where the loaded image is displayed, and users can see the results of their edits in **real-time**. This interactive space allows users to work directly with the image as they explore the application's various features.
 
-Zona de vizualizare a imaginilor este situată în partea dreaptă a ecranului. Aici, imaginea încărcată este afișată într-un **canvas**, iar utilizatorul poate vedea efectele modificărilor aplicate **în timp real**. Această zonă oferă o experiență interactivă, permițând utilizatorului să vizualizeze și să lucreze cu imaginea în timp ce explorează diferitele funcționalități ale aplicației.
+<table>
+<tr>
+<td><b>Original Image</b></td>
+<td><b>Edited Image (rotated, with black and white and detail filters and drawing)</b></td>
+</tr>
+<tr>
+<td><img src="https://github.com/user-attachments/assets/82e24491-b149-46be-bb8f-3f60b0898781" alt="Original Image"></td>
+<td><img src="https://github.com/user-attachments/assets/bf6c0089-38d0-49c4-92e4-4946b24555cc" alt="Edited Image"></td>
+</tr>
+</table>
 
-În general, ecranul principal al aplicației îmbină utilitatea și accesibilitatea, facilitând utilizatorilor editarea și vizualizarea imaginilor într-un mod eficient și prietenos.
+Overall, the application's interface combines utility with accessibility, providing an efficient and user-friendly way to edit and view images.
